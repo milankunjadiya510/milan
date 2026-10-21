@@ -4,6 +4,9 @@
   var root = document.documentElement;
   var body = document.body;
 
+  // Turn on page animations (see "Motion" in style.css)
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) root.classList.add("motion");
+
   /* =========================================================
      1. Translations
      English text lives in the HTML (default). Gujarati below.
@@ -259,6 +262,26 @@
 
   function printFallback() {
     window.print();
+  }
+
+  /* =========================================================
+     Scroll reveal: cards fade up when they come into view.
+     Side-by-side cards get a small stagger.
+     ========================================================= */
+  if (root.classList.contains("motion") && "IntersectionObserver" in window) {
+    var revealIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-in");
+        revealIO.unobserve(entry.target);
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.12 });
+
+    document.querySelectorAll(".body > .section, .footer").forEach(function (el, i) {
+      el.classList.add("reveal");
+      el.style.transitionDelay = (i % 2) * 0.12 + "s";
+      revealIO.observe(el);
+    });
   }
 
   document.querySelectorAll(".js-download-pdf").forEach(function (btn) {

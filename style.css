@@ -525,6 +525,51 @@ body.is-locked { overflow: hidden; }
   .footer__grid { grid-template-columns: 1fr 1fr 2fr; }
 }
 
+/* ================= Motion =================
+   Brass frame opens around the portrait, intro lines rise in turn,
+   and each card fades up as its brass title rule draws across.
+   Only runs when <html> has .motion (set in <head>). */
+@keyframes frame-open {
+  from { outline-offset: 0; outline-color: transparent; }
+  to   { outline-offset: 6px; outline-color: var(--brass); }
+}
+@keyframes photo-settle {
+  from { transform: scale(1.08); }
+  to   { transform: none; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.motion .portrait { animation: frame-open 1.1s .15s cubic-bezier(.2, .7, .2, 1) both; }
+.motion .portrait img { animation: photo-settle 1.6s cubic-bezier(.2, .7, .2, 1) both; }
+.motion .intro > * { animation: rise .7s cubic-bezier(.2, .7, .2, 1) both; }
+.motion .intro > :nth-child(1) { animation-delay: .3s; }
+.motion .intro > :nth-child(2) { animation-delay: .42s; }
+.motion .intro > :nth-child(3) { animation-delay: .54s; }
+.motion .intro > :nth-child(4) { animation-delay: .7s; }
+
+.motion .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .7s ease-out, transform .7s cubic-bezier(.2, .7, .2, 1);
+}
+.motion .reveal.is-in { opacity: 1; transform: none; }
+.motion .reveal .section__title::after {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 1s .3s cubic-bezier(.65, 0, .35, 1);
+}
+.motion .reveal.is-in .section__title::after { transform: none; }
+
+/* PDF copy and print always show the finished page */
+.pdf-layout *, .pdf-layout *::after { animation: none !important; transition: none !important; }
+.pdf-layout .reveal, .pdf-layout .section__title::after { opacity: 1 !important; transform: none !important; }
+@media print {
+  .reveal, .section__title::after { opacity: 1 !important; transform: none !important; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
